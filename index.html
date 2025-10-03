@@ -8,28 +8,29 @@
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
-            background-color: #f8f9fa;
+            background-color: #ececd9;
             color: #000000;
             font-size: 16px;
         }
         header {
             text-align: center;
             padding: 30px 20px;
-            background-color: #ffffff;
+            background-color: #64690c;
+            color: white;
             border-bottom: 2px solid #dee2e6;
         }
         header h1 {
-            color: #000000;
+            color: white;
             margin-bottom: 10px;
             font-size: 2.5em;
         }
         header h2 {
-            color: #000000;
+            color: #f4cd67;
             margin-bottom: 15px;
             font-weight: normal;
         }
         header p {
-            color: #000000;
+            color: white;
             font-size: 1.1em;
             line-height: 1.5;
         }
@@ -42,13 +43,50 @@
         }
         .meta input {
             padding: 12px;
-            border: 2px solid #dee2e6;
+            border: 2px solid #ccc;
             border-radius: 8px;
             font-size: 16px;
             background-color: #ffffff;
             color: #000000;
             min-width: 150px;
         }
+        
+        .templates-section {
+            background-color: #ffffff;
+            margin: 20px;
+            padding: 20px;
+            border-radius: 12px;
+            border: 2px solid #64690c;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .templates-section h3 {
+            color: #64690c;
+            margin-top: 0;
+            text-align: center;
+        }
+        .template-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+        .template-btn {
+            background-color: #64690c;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .template-btn:hover {
+            background-color: #4a4f08;
+            transform: translateY(-1px);
+        }
+        
         #builder {
             display: flex;
             justify-content: flex-start;
@@ -58,16 +96,18 @@
             min-height: 400px;
             width: 100%;
             box-sizing: border-box;
+            position: relative;
+            flex-wrap: nowrap;
         }
         .column {
             background-color: #ffffff;
-            border: 2px solid #dee2e6;
+            border: 2px solid #000000;
             border-radius: 12px;
             padding: 20px;
-            flex: 1;
-            min-width: 180px;
-            max-width: 220px;
+            flex: 0 0 auto;
+            width: 200px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            position: relative;
         }
         .column h3 {
             text-align: center;
@@ -76,16 +116,52 @@
             margin-bottom: 20px;
             font-size: 1.1em;
             font-weight: bold;
-            border-bottom: 2px solid #e9ecef;
+            border-bottom: 3px solid #000000;
             padding-bottom: 10px;
             line-height: 1.3;
+            position: relative;
         }
+        
+        .tip-icon {
+            position: absolute;
+            top: -5px;
+            right: 5px;
+            background: #64690c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .tip-content {
+            position: absolute;
+            top: 25px;
+            right: 0;
+            background: #64690c;
+            color: white;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            width: 200px;
+            z-index: 1000;
+            display: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        .tip-content.show {
+            display: block;
+        }
+        
         .box {
             background-color: #f8f9fa;
             padding: 12px 15px;
             margin: 10px 0;
             border-radius: 8px;
-            border: 1px solid #dee2e6;
+            border: 1px solid #ccc;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -116,49 +192,113 @@
         .export-controls {
             margin-top: 20px;
             padding-top: 20px;
-            border-top: 2px solid #dee2e6;
+            border-top: 2px solid #000000;
         }
         .controls input, .controls select, .controls button {
             margin: 8px;
             padding: 12px 20px;
             border-radius: 8px;
             font-size: 16px;
-            border: 2px solid #dee2e6;
+            border: 2px solid #ccc;
         }
         .controls input, .controls select {
             background-color: #ffffff;
             color: #000000;
         }
         .controls button {
-            background-color: #007bff;
+            background-color: #64690c;
             color: white;
-            border: 2px solid #007bff;
+            border: none;
             cursor: pointer;
             font-weight: bold;
             transition: background-color 0.2s;
         }
         .controls button:hover {
-            background-color: #0056b3;
-            border-color: #0056b3;
+            background-color: #4a4f08;
+            transform: translateY(-1px);
         }
         .export-controls button {
-            background-color: #28a745;
-            border-color: #28a745;
+            background-color: #64690c;
             margin: 0 10px;
-        }
-        .export-controls button:hover {
-            background-color: #218838;
-            border-color: #218838;
         }
         .clear-btn {
             background-color: #dc3545 !important;
-            border-color: #dc3545 !important;
         }
         .clear-btn:hover {
             background-color: #c82333 !important;
-            border-color: #c82333 !important;
         }
-        /* Tablet styles */
+        
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            text-align: center;
+            border: 3px solid #64690c;
+        }
+        .modal h2 {
+            color: #64690c;
+            margin-bottom: 20px;
+        }
+        .modal input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            box-sizing: border-box;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .modal button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .modal .download-btn {
+            background-color: #64690c;
+            color: white;
+        }
+        .modal .download-btn:hover {
+            background-color: #4a4f08;
+        }
+        .modal .cancel-btn {
+            background: #6c757d;
+            color: white;
+        }
+        .modal .cancel-btn:hover {
+            background: #5a6268;
+        }
+        
+        .watermark {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 10px;
+            color: #999;
+            font-style: italic;
+        }
+        
         @media (max-width: 1200px) {
             #builder {
                 flex-wrap: wrap;
@@ -171,7 +311,6 @@
             }
         }
         
-        /* Mobile styles */
         @media (max-width: 768px) {
             header {
                 padding: 20px 15px;
@@ -198,6 +337,19 @@
                 min-width: auto;
             }
             
+            .templates-section {
+                margin: 15px;
+                padding: 15px;
+            }
+            .template-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            .template-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+            
             #builder {
                 flex-direction: column;
                 align-items: center;
@@ -214,6 +366,11 @@
                 font-size: 1.2em;
             }
             
+            .tip-content {
+                width: 150px;
+                font-size: 11px;
+            }
+            
             .controls {
                 margin: 20px 15px;
             }
@@ -227,7 +384,7 @@
                 width: 100%;
                 max-width: 300px;
                 margin: 5px 0;
-                font-size: 16px; /* Prevents zoom on iOS */
+                font-size: 16px;
             }
             
             .export-controls {
@@ -242,7 +399,6 @@
             }
         }
         
-        /* Small mobile styles */
         @media (max-width: 480px) {
             header {
                 padding: 15px 10px;
@@ -264,6 +420,11 @@
                 font-size: 14px;
                 padding: 10px 12px;
             }
+            
+            .modal-content {
+                margin: 20% auto;
+                padding: 20px;
+            }
         }
     </style>
 </head>
@@ -280,13 +441,74 @@
         <input type="date" id="date" />
     </section>
     
+    <section class="templates-section">
+        <h3>🚀 Quick Start with Sample Templates</h3>
+        <div class="template-buttons">
+            <button class="template-btn" onclick="loadTemplate('education')">Education Program</button>
+            <button class="template-btn" onclick="loadTemplate('healthcare')">Healthcare Initiative</button>
+            <button class="template-btn" onclick="loadTemplate('nonprofit')">Nonprofit Program</button>
+        </div>
+        <p style="text-align: center; color: #6c757d; font-size: 14px; margin: 0;">
+            Click a template to populate your logic model with professional examples
+        </p>
+    </section>
+    
     <section id="builder">
-        <div class="column" id="inputs"><h3>Inputs</h3></div>
-        <div class="column" id="activities"><h3>Activities</h3></div>
-        <div class="column" id="outputs"><h3>Outputs</h3></div>
-        <div class="column" id="shortTerm"><h3>Short-Term Outcomes</h3></div>
-        <div class="column" id="mediumTerm"><h3>Medium-Term Outcomes</h3></div>
-        <div class="column" id="longTerm"><h3>Long-Term Outcomes</h3></div>
+        <div class="column" id="inputs">
+            <h3>Inputs
+                <span class="tip-icon" onclick="toggleTip('inputs')">?</span>
+                <div class="tip-content" id="tip-inputs">
+                    <strong>Inputs:</strong> Resources invested in your program (staff, funding, materials, partnerships, facilities)
+                    <br><br><strong>Examples:</strong> Budget, personnel, equipment, volunteer time
+                </div>
+            </h3>
+        </div>
+        <div class="column" id="activities">
+            <h3>Activities
+                <span class="tip-icon" onclick="toggleTip('activities')">?</span>
+                <div class="tip-content" id="tip-activities">
+                    <strong>Activities:</strong> What your program does with the inputs (services, processes, interventions)
+                    <br><br><strong>Examples:</strong> Training sessions, counseling, workshops, mentoring
+                </div>
+            </h3>
+        </div>
+        <div class="column" id="outputs">
+            <h3>Outputs
+                <span class="tip-icon" onclick="toggleTip('outputs')">?</span>
+                <div class="tip-content" id="tip-outputs">
+                    <strong>Outputs:</strong> Direct products of your activities (measurable deliverables)
+                    <br><br><strong>Examples:</strong> # people served, # sessions completed, materials distributed
+                </div>
+            </h3>
+        </div>
+        <div class="column" id="shortTerm">
+            <h3>Short-Term Outcomes
+                <span class="tip-icon" onclick="toggleTip('shortTerm')">?</span>
+                <div class="tip-content" id="tip-shortTerm">
+                    <strong>Short-Term:</strong> Immediate changes in participants (knowledge, skills, attitudes) - 1-6 months
+                    <br><br><strong>Examples:</strong> Increased knowledge, improved skills, changed attitudes
+                </div>
+            </h3>
+        </div>
+        <div class="column" id="mediumTerm">
+            <h3>Medium-Term Outcomes
+                <span class="tip-icon" onclick="toggleTip('mediumTerm')">?</span>
+                <div class="tip-content" id="tip-mediumTerm">
+                    <strong>Medium-Term:</strong> Changes in behavior, practices, or conditions - 6 months to 2 years
+                    <br><br><strong>Examples:</strong> Behavior changes, improved practices, policy adoption
+                </div>
+            </h3>
+        </div>
+        <div class="column" id="longTerm">
+            <h3>Long-Term Outcomes
+                <span class="tip-icon" onclick="toggleTip('longTerm')">?</span>
+                <div class="tip-content" id="tip-longTerm">
+                    <strong>Long-Term:</strong> Ultimate impact and systemic changes - 2+ years
+                    <br><br><strong>Examples:</strong> Community transformation, systemic change, sustained impact
+                </div>
+            </h3>
+        </div>
+        <div class="watermark">Powered by Vision Shift Catalyst</div>
     </section>
     
     <section class="controls">
@@ -305,15 +527,63 @@
         
         <div class="export-controls">
             <button class="clear-btn" onclick="clearAll()">Clear All</button>
-            <button onclick="downloadPDF()">Download PDF</button>
-            <button onclick="downloadImage()">Download Image</button>
+            <button onclick="showEmailModal('pdf')">Download PDF</button>
+            <button onclick="showEmailModal('image')">Download Image</button>
         </div>
     </section>
+
+    <div id="emailModal" class="modal">
+        <div class="modal-content">
+            <h2>🎉 Get Your Professional Logic Model</h2>
+            <p>Enter your email to download your logic model. We'll also send you additional resources to help you succeed!</p>
+            <input type="email" id="emailInput" placeholder="Enter your email address" required />
+            <input type="text" id="organizationInput" placeholder="Organization (optional)" />
+            <div class="modal-buttons">
+                <button class="download-btn" onclick="processDownload()">Download Now</button>
+                <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+            </div>
+            <p style="font-size: 12px; color: #6c757d; margin-top: 15px;">
+                We respect your privacy. Unsubscribe anytime.
+            </p>
+        </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     
     <script>
+        let currentDownloadType = '';
+        
+        const templates = {
+            education: {
+                name: "Student Success Program",
+                inputs: ["Teachers", "Curriculum", "Technology", "Classroom space", "Funding"],
+                activities: ["Small group tutoring", "One-on-one mentoring", "Study skills workshops", "Parent engagement sessions"],
+                outputs: ["150 students tutored", "300 mentoring hours", "12 workshops delivered", "75 parents engaged"],
+                shortTerm: ["Improved study habits", "Increased confidence", "Better attendance", "Enhanced motivation"],
+                mediumTerm: ["Higher test scores", "Improved grades", "Reduced dropout risk", "Stronger parent involvement"],
+                longTerm: ["Increased graduation rates", "College enrollment", "Career readiness", "Community engagement"]
+            },
+            healthcare: {
+                name: "Community Health Initiative",
+                inputs: ["Health educators", "Medical supplies", "Community centers", "Healthcare partnerships", "Grant funding"],
+                activities: ["Health screenings", "Educational workshops", "Support groups", "Care coordination"],
+                outputs: ["500 screenings completed", "24 workshops held", "8 support groups", "200 care plans"],
+                shortTerm: ["Health awareness", "Behavior motivation", "Self-efficacy", "Social support"],
+                mediumTerm: ["Lifestyle changes", "Regular healthcare use", "Medication compliance", "Risk reduction"],
+                longTerm: ["Improved health outcomes", "Reduced hospitalizations", "Community wellness", "Health equity"]
+            },
+            nonprofit: {
+                name: "Community Development Program",
+                inputs: ["Staff coordinators", "Volunteers", "Meeting spaces", "Program materials", "Partner organizations"],
+                activities: ["Leadership training", "Community forums", "Project planning", "Volunteer coordination"],
+                outputs: ["50 leaders trained", "12 forums held", "8 projects launched", "200 volunteers engaged"],
+                shortTerm: ["Leadership skills", "Community knowledge", "Network building", "Civic engagement"],
+                mediumTerm: ["Project implementation", "Community partnerships", "Policy advocacy", "Resource mobilization"],
+                longTerm: ["Community transformation", "Sustainable development", "Increased capacity", "Social change"]
+            }
+        };
+
         function addItem() {
             const input = document.getElementById("itemInput");
             const category = document.getElementById("category").value;
@@ -342,44 +612,130 @@
             }
         }
 
+        function loadTemplate(type) {
+            const template = templates[type];
+            
+            document.getElementById("programName").value = template.name;
+            
+            ["inputs", "activities", "outputs", "shortTerm", "mediumTerm", "longTerm"].forEach(id => {
+                const column = document.getElementById(id);
+                const h3 = column.querySelector("h3");
+                column.innerHTML = "";
+                column.appendChild(h3);
+            });
+            
+            Object.keys(template).forEach(key => {
+                if (key !== 'name' && template[key]) {
+                    const column = document.getElementById(key);
+                    template[key].forEach(item => {
+                        const box = document.createElement("div");
+                        box.className = "box";
+                        box.innerHTML = `<span>${item}</span> <button onclick="this.parentElement.remove()">×</button>`;
+                        column.appendChild(box);
+                    });
+                }
+            });
+            
+            document.getElementById("builder").scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function toggleTip(columnId) {
+            document.querySelectorAll('.tip-content').forEach(tip => {
+                if (tip.id !== `tip-${columnId}`) {
+                    tip.classList.remove('show');
+                }
+            });
+            
+            const tip = document.getElementById(`tip-${columnId}`);
+            tip.classList.toggle('show');
+        }
+
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.tip-icon') && !event.target.closest('.tip-content')) {
+                document.querySelectorAll('.tip-content').forEach(tip => {
+                    tip.classList.remove('show');
+                });
+            }
+        });
+
+        function showEmailModal(type) {
+            currentDownloadType = type;
+            document.getElementById('emailModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('emailModal').style.display = 'none';
+            document.getElementById('emailInput').value = '';
+            document.getElementById('organizationInput').value = '';
+        }
+
+        function processDownload() {
+            const email = document.getElementById('emailInput').value;
+            const organization = document.getElementById('organizationInput').value;
+            
+            if (!email || !email.includes('@')) {
+                alert('Please enter a valid email address');
+                return;
+            }
+            
+            console.log('Lead captured:', { email, organization, downloadType: currentDownloadType });
+            
+            closeModal();
+            
+            if (currentDownloadType === 'pdf') {
+                downloadPDF();
+            } else if (currentDownloadType === 'image') {
+                downloadImage();
+            }
+            
+            alert('Thank you! Your download will start shortly. Check your email for additional resources!');
+        }
+
         function downloadPDF() {
             const { jsPDF } = window.jspdf;
-            const pdf = new jsPDF('l', 'mm', 'a4'); // landscape orientation
+            const pdf = new jsPDF('l', 'mm', 'a4');
             
-            // Get program info
             const programName = document.getElementById("programName").value || "Logic Model";
             const userName = document.getElementById("userName").value || "";
             const date = document.getElementById("date").value || new Date().toLocaleDateString();
             
-            // Set up PDF
+            pdf.setFillColor(100, 105, 12);
+            pdf.rect(0, 0, 297, 25, 'F');
+            
+            pdf.setTextColor(255, 255, 255);
+            pdf.setFontSize(16);
+            pdf.setFont(undefined, 'bold');
+            pdf.text('Vision Shift Catalyst - Logic Model Builder', 20, 15);
+            pdf.text('Professional Program Evaluation Services', 180, 15);
+            
+            pdf.setTextColor(0, 0, 0);
             pdf.setFontSize(18);
-            pdf.text(programName, 20, 20);
+            pdf.setFont(undefined, 'bold');
+            pdf.text(programName, 20, 40);
             
             pdf.setFontSize(11);
-            let headerY = 30;
+            pdf.setFont(undefined, 'normal');
+            let headerY = 50;
             if (userName) {
                 pdf.text(`Created by: ${userName}`, 20, headerY);
                 headerY += 6;
             }
             pdf.text(`Date: ${date}`, 20, headerY);
             
-            // Add logic model content
             const columns = ["inputs", "activities", "outputs", "shortTerm", "mediumTerm", "longTerm"];
             const columnTitles = ["Inputs", "Activities", "Outputs", "Short-Term Outcomes", "Medium-Term Outcomes", "Long-Term Outcomes"];
             
             let startY = headerY + 15;
             const columnWidth = 42;
-            const pageWidth = 297; // A4 landscape width
             const startX = 15;
             
             columns.forEach((columnId, index) => {
                 const xPosition = startX + (index * columnWidth);
                 
-                // Column title
                 pdf.setFontSize(12);
                 pdf.setFont(undefined, 'bold');
+                pdf.setTextColor(100, 105, 12);
                 
-                // Split long titles into multiple lines
                 const titleLines = pdf.splitTextToSize(columnTitles[index], columnWidth - 2);
                 let titleY = startY;
                 titleLines.forEach(line => {
@@ -387,9 +743,9 @@
                     titleY += 5;
                 });
                 
-                // Column items
                 pdf.setFontSize(9);
                 pdf.setFont(undefined, 'normal');
+                pdf.setTextColor(0, 0, 0);
                 const column = document.getElementById(columnId);
                 const boxes = column.querySelectorAll('.box span');
                 
@@ -402,12 +758,31 @@
                 });
             });
             
+            pdf.setFontSize(8);
+            pdf.setTextColor(150, 150, 150);
+            pdf.text('Powered by Vision Shift Catalyst | Professional Program Evaluation & Logic Model Services', 20, 190);
+            
             pdf.save(`${programName.replace(/[^a-z0-9]/gi, '_')}_logic_model.pdf`);
         }
 
         function downloadImage() {
             const element = document.getElementById('builder');
             const programName = document.getElementById("programName").value || "logic_model";
+            
+            const overlay = document.createElement('div');
+            overlay.style.position = 'absolute';
+            overlay.style.top = '0';
+            overlay.style.left = '0';
+            overlay.style.right = '0';
+            overlay.style.background = '#64690c';
+            overlay.style.color = 'white';
+            overlay.style.padding = '10px';
+            overlay.style.fontSize = '14px';
+            overlay.style.fontWeight = 'bold';
+            overlay.style.textAlign = 'center';
+            overlay.style.zIndex = '1000';
+            overlay.innerHTML = 'Vision Shift Catalyst - Professional Logic Model Builder';
+            element.insertBefore(overlay, element.firstChild);
             
             html2canvas(element, {
                 backgroundColor: '#ffffff',
@@ -419,16 +794,24 @@
                 link.download = `${programName.replace(/[^a-z0-9]/gi, '_')}_logic_model.png`;
                 link.href = canvas.toDataURL();
                 link.click();
+                
+                element.removeChild(overlay);
             }).catch(error => {
                 console.error('Error generating image:', error);
                 alert('Error generating image. Please try again.');
+                element.removeChild(overlay);
             });
         }
 
-        // Allow Enter key to add items
         document.getElementById("itemInput").addEventListener("keypress", function(event) {
             if (event.key === "Enter") {
                 addItem();
+            }
+        });
+
+        document.getElementById('emailModal').addEventListener('click', function(event) {
+            if (event.target === this) {
+                closeModal();
             }
         });
     </script>
