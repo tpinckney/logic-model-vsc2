@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Logic Model Builder - Vision Shift Catalyst</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            background-color: #f8f9fa;
+            color: #000000;
+            font-size: 16px;
+        }
+        header {
+            text-align: center;
+            padding: 30px 20px;
+            background-color: #ffffff;
+            border-bottom: 2px solid #dee2e6;
+        }
+        header h1 {
+            color: #000000;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        header h2 {
+            color: #000000;
+            margin-bottom: 15px;
+            font-weight: normal;
+        }
+        header p {
+            color: #000000;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        .meta {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px;
+            flex-wrap: wrap;
+        }
+        .meta input {
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            background-color: #ffffff;
+            color: #000000;
+            min-width: 150px;
+        }
+        #builder {
+            display: flex;
+            justify-content: flex-start;
+            padding: 20px;
+            gap: 15px;
+            overflow-x: auto;
+            min-height: 400px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        .column {
+            background-color: #ffffff;
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 20px;
+            flex: 1;
+            min-width: 180px;
+            max-width: 220px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .column h3 {
+            text-align: center;
+            color: #000000;
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            font-weight: bold;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 10px;
+            line-height: 1.3;
+        }
+        .box {
+            background-color: #f8f9fa;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #000000;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+        .box button {
+            border: none;
+            background: #dc3545;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 4px;
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+        .box button:hover {
+            background: #c82333;
+        }
+        .controls {
+            text-align: center;
+            margin: 30px 20px;
+        }
+        .add-controls {
+            margin-bottom: 20px;
+        }
+        .export-controls {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #dee2e6;
+        }
+        .controls input, .controls select, .controls button {
+            margin: 8px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            border: 2px solid #dee2e6;
+        }
+        .controls input, .controls select {
+            background-color: #ffffff;
+            color: #000000;
+        }
+        .controls button {
+            background-color: #007bff;
+            color: white;
+            border: 2px solid #007bff;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+        .controls button:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .export-controls button {
+            background-color: #28a745;
+            border-color: #28a745;
+            margin: 0 10px;
+        }
+        .export-controls button:hover {
+            background-color: #218838;
+            border-color: #218838;
+        }
+        .clear-btn {
+            background-color: #dc3545 !important;
+            border-color: #dc3545 !important;
+        }
+        .clear-btn:hover {
+            background-color: #c82333 !important;
+            border-color: #c82333 !important;
+        }
+        /* Tablet styles */
+        @media (max-width: 1200px) {
+            #builder {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .column {
+                min-width: 280px;
+                max-width: 300px;
+                margin-bottom: 20px;
+            }
+        }
+        
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            header {
+                padding: 20px 15px;
+            }
+            header h1 {
+                font-size: 2em;
+            }
+            header h2 {
+                font-size: 1.2em;
+            }
+            header p {
+                font-size: 1em;
+            }
+            
+            .meta {
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+                margin: 15px;
+            }
+            .meta input {
+                width: 100%;
+                max-width: 300px;
+                min-width: auto;
+            }
+            
+            #builder {
+                flex-direction: column;
+                align-items: center;
+                padding: 15px;
+                gap: 20px;
+            }
+            .column {
+                width: 100%;
+                max-width: 350px;
+                min-width: auto;
+                margin-bottom: 15px;
+            }
+            .column h3 {
+                font-size: 1.2em;
+            }
+            
+            .controls {
+                margin: 20px 15px;
+            }
+            .add-controls {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            .controls input, .controls select, .controls button {
+                width: 100%;
+                max-width: 300px;
+                margin: 5px 0;
+                font-size: 16px; /* Prevents zoom on iOS */
+            }
+            
+            .export-controls {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 10px;
+            }
+            .export-controls button {
+                width: 100%;
+                max-width: 200px;
+            }
+        }
+        
+        /* Small mobile styles */
+        @media (max-width: 480px) {
+            header {
+                padding: 15px 10px;
+            }
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            #builder {
+                padding: 10px;
+            }
+            .column {
+                padding: 15px;
+            }
+            .column h3 {
+                font-size: 1.1em;
+            }
+            .box {
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Logic Model Builder</h1>
+        <h2>Brought to you by <strong>Vision Shift Catalyst</strong></h2>
+        <p>Build a logic model that connects your program's inputs, activities, and outcomes—with clarity, intention, and measurable impact.</p>
+    </header>
+    
+    <section class="meta">
+        <input type="text" id="programName" placeholder="Program Name" />
+        <input type="text" id="userName" placeholder="Your Name" />
+        <input type="date" id="date" />
+    </section>
+    
+    <section id="builder">
+        <div class="column" id="inputs"><h3>Inputs</h3></div>
+        <div class="column" id="activities"><h3>Activities</h3></div>
+        <div class="column" id="outputs"><h3>Outputs</h3></div>
+        <div class="column" id="shortTerm"><h3>Short-Term Outcomes</h3></div>
+        <div class="column" id="mediumTerm"><h3>Medium-Term Outcomes</h3></div>
+        <div class="column" id="longTerm"><h3>Long-Term Outcomes</h3></div>
+    </section>
+    
+    <section class="controls">
+        <div class="add-controls">
+            <input type="text" id="itemInput" placeholder="Enter item" />
+            <select id="category">
+                <option value="inputs">Inputs</option>
+                <option value="activities">Activities</option>
+                <option value="outputs">Outputs</option>
+                <option value="shortTerm">Short-Term Outcomes</option>
+                <option value="mediumTerm">Medium-Term Outcomes</option>
+                <option value="longTerm">Long-Term Outcomes</option>
+            </select>
+            <button onclick="addItem()">Add Item</button>
+        </div>
+        
+        <div class="export-controls">
+            <button class="clear-btn" onclick="clearAll()">Clear All</button>
+            <button onclick="downloadPDF()">Download PDF</button>
+            <button onclick="downloadImage()">Download Image</button>
+        </div>
+    </section>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    
+    <script>
+        function addItem() {
+            const input = document.getElementById("itemInput");
+            const category = document.getElementById("category").value;
+            const column = document.getElementById(category);
+            
+            if (input.value.trim() === "") {
+                alert("Please enter an item");
+                return;
+            }
+            
+            const box = document.createElement("div");
+            box.className = "box";
+            box.innerHTML = `<span>${input.value}</span> <button onclick="this.parentElement.remove()">×</button>`;
+            column.appendChild(box);
+            input.value = "";
+        }
+
+        function clearAll() {
+            if (confirm("Are you sure you want to clear all items?")) {
+                ["inputs", "activities", "outputs", "shortTerm", "mediumTerm", "longTerm"].forEach(id => {
+                    const column = document.getElementById(id);
+                    const h3 = column.querySelector("h3");
+                    column.innerHTML = "";
+                    column.appendChild(h3);
+                });
+            }
+        }
+
+        function downloadPDF() {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('l', 'mm', 'a4'); // landscape orientation
+            
+            // Get program info
+            const programName = document.getElementById("programName").value || "Logic Model";
+            const userName = document.getElementById("userName").value || "";
+            const date = document.getElementById("date").value || new Date().toLocaleDateString();
+            
+            // Set up PDF
+            pdf.setFontSize(18);
+            pdf.text(programName, 20, 20);
+            
+            pdf.setFontSize(11);
+            let headerY = 30;
+            if (userName) {
+                pdf.text(`Created by: ${userName}`, 20, headerY);
+                headerY += 6;
+            }
+            pdf.text(`Date: ${date}`, 20, headerY);
+            
+            // Add logic model content
+            const columns = ["inputs", "activities", "outputs", "shortTerm", "mediumTerm", "longTerm"];
+            const columnTitles = ["Inputs", "Activities", "Outputs", "Short-Term Outcomes", "Medium-Term Outcomes", "Long-Term Outcomes"];
+            
+            let startY = headerY + 15;
+            const columnWidth = 42;
+            const pageWidth = 297; // A4 landscape width
+            const startX = 15;
+            
+            columns.forEach((columnId, index) => {
+                const xPosition = startX + (index * columnWidth);
+                
+                // Column title
+                pdf.setFontSize(12);
+                pdf.setFont(undefined, 'bold');
+                
+                // Split long titles into multiple lines
+                const titleLines = pdf.splitTextToSize(columnTitles[index], columnWidth - 2);
+                let titleY = startY;
+                titleLines.forEach(line => {
+                    pdf.text(line, xPosition, titleY);
+                    titleY += 5;
+                });
+                
+                // Column items
+                pdf.setFontSize(9);
+                pdf.setFont(undefined, 'normal');
+                const column = document.getElementById(columnId);
+                const boxes = column.querySelectorAll('.box span');
+                
+                let itemY = titleY + 5;
+                boxes.forEach(box => {
+                    const text = box.textContent;
+                    const lines = pdf.splitTextToSize(text, columnWidth - 2);
+                    pdf.text(lines, xPosition, itemY);
+                    itemY += lines.length * 4 + 2;
+                });
+            });
+            
+            pdf.save(`${programName.replace(/[^a-z0-9]/gi, '_')}_logic_model.pdf`);
+        }
+
+        function downloadImage() {
+            const element = document.getElementById('builder');
+            const programName = document.getElementById("programName").value || "logic_model";
+            
+            html2canvas(element, {
+                backgroundColor: '#ffffff',
+                scale: 2,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `${programName.replace(/[^a-z0-9]/gi, '_')}_logic_model.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            }).catch(error => {
+                console.error('Error generating image:', error);
+                alert('Error generating image. Please try again.');
+            });
+        }
+
+        // Allow Enter key to add items
+        document.getElementById("itemInput").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                addItem();
+            }
+        });
+    </script>
+</body>
+</html>
