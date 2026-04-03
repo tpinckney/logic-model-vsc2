@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Logic Model Builder - Vision Shift Catalyst</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+
+.skip-link{position:absolute;top:-60px;left:1rem;background:#4a5208;color:#fff;padding:8px 14px;border-radius:0 0 8px 8px;font-size:13px;font-weight:600;text-decoration:none;z-index:9999;transition:top 0.15s;}
+.skip-link:focus{top:0;}
+
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:#ececd9;color:#1a1a1a;}
+
+/* ── Header ── */
+.w-header{padding:1.5rem 1.5rem 1rem;background:#fff;border-bottom:1px solid #b8b8a4;}
+.brand{font-size:11px;font-weight:700;letter-spacing:0.08em;color:#4a5208;text-transform:uppercase;margin-bottom:4px;}
+.w-header h1{font-size:22px;font-weight:600;color:#1a1a1a;margin-bottom:4px;}
+.w-header p{font-size:13px;color:#3a3a2a;line-height:1.5;}
+
+/* ── Program info ── */
+.w-meta{background:#fff;border-bottom:1px solid #b8b8a4;padding:.75rem 1.5rem;}
+.w-meta fieldset{border:none;padding:0;margin:0;}
+.w-meta legend{font-size:11px;font-weight:700;letter-spacing:0.07em;color:#1a1a1a;text-transform:uppercase;margin-bottom:8px;display:block;}
+.meta-fields{display:flex;gap:10px;flex-wrap:wrap;}
+.meta-field{display:flex;flex-direction:column;flex:1;min-width:140px;gap:4px;}
+.meta-field label{font-size:11px;font-weight:700;color:#1a1a1a;}
+.meta-field input{padding:7px 11px;border-radius:8px;border:1.5px solid #9a9a80;background:#ececd9;color:#1a1a1a;font-size:13px;font-family:inherit;}
+.meta-field input:focus{outline:3px solid #4a5208;outline-offset:2px;border-color:#4a5208;}
+.meta-field input::placeholder{color:#5a5a4a;}
+
+/* ── Section labels — ALL CAPS, solid black ── */
+.sl{font-size:10px;font-weight:800;letter-spacing:0.09em;color:#1a1a1a;text-transform:uppercase;margin-bottom:8px;}
+.w-section{padding:.75rem 1.5rem;background:#fff;border-bottom:1px solid #b8b8a4;}
+
+/* ── How to use — collapsible, styled as button ── */
+.how-wrap{background:#fff;border-bottom:1px solid #b8b8a4;padding:.6rem 1.5rem;}
+.how-toggle{display:inline-flex;align-items:center;gap:8px;padding:6px 16px;background:#ececd9;border:1.5px solid #9a9a80;border-radius:20px;cursor:pointer;font-family:inherit;text-align:left;transition:all 0.15s;}
+.how-toggle:hover{border-color:#4a5208;background:#deded0;}
+.how-toggle:focus{outline:3px solid #4a5208;outline-offset:2px;}
+.how-toggle[aria-expanded="true"]{background:#4a5208;border-color:#4a5208;}
+.how-toggle[aria-expanded="true"] .how-label{color:#fff;}
+.how-toggle[aria-expanded="true"] .how-chev{color:#fff;}
+.how-label{font-size:12px;font-weight:700;color:#1a1a1a;}
+.how-chev{font-size:12px;color:#6a6a5a;transition:transform 0.2s;line-height:1;}
+.how-chev.open{transform:rotate(180deg);}
+.how-body{display:none;padding:.75rem 0 .25rem;}
+.how-body.open{display:block;}
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:8px;}
+.how-item{background:#f0efdf;border:1px solid #b8b8a4;border-radius:8px;padding:10px 12px;}
+.how-item strong{font-size:11px;font-weight:700;color:#4a5208;display:block;margin-bottom:3px;text-transform:uppercase;letter-spacing:0.05em;}
+.how-item span{font-size:12px;color:#3a3a2a;line-height:1.5;}
+
+/* ── Templates ── */
+.tmpl-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;}
+.tp{padding:6px 14px;border-radius:20px;border:1.5px solid #9a9a80;background:#ececd9;color:#1a1a1a;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all 0.15s;}
+.tp:hover{border-color:#4a5208;color:#4a5208;background:#deded0;}
+.tp:focus{outline:3px solid #4a5208;outline-offset:2px;}
+
+/* ── AI trigger ── */
+.ai-trigger{display:flex;align-items:center;gap:7px;padding:6px 14px;border-radius:20px;border:2px solid #4a5208;background:#fff;color:#1a1a1a;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;margin-left:auto;transition:all 0.15s;}
+.ai-trigger:hover{background:#4a5208;color:#fff;}
+.ai-trigger:focus{outline:3px solid #c05e00;outline-offset:2px;}
+.ai-dot{width:8px;height:8px;border-radius:50%;background:#c05e00;flex-shrink:0;}
+.ai-trigger:hover .ai-dot{background:#fff;}
+
+/* ── Builder grid ── */
+.bwrap{padding:.75rem 1rem;background:#ececd9;}
+.builder{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;width:100%;}
+
+/* ── Columns ── */
+.col{background:#fff;border:1px solid #b8b8a4;border-radius:10px;padding:12px 10px;min-height:240px;}
+.col-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:4px;gap:6px;}
+.ca{height:3px;border-radius:2px;margin-bottom:9px;}
+.ct{font-size:10px;font-weight:800;letter-spacing:0.07em;color:#1a1a1a;text-transform:uppercase;line-height:1.4;flex:1;}
+
+/* ── Tip button ── */
+.tb{width:24px;height:24px;min-width:24px;border-radius:50%;background:#ececd9;border:1.5px solid #9a9a80;color:#1a1a1a;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:inherit;flex-shrink:0;transition:all 0.15s;}
+.tb:hover{background:#4a5208;color:#fff;border-color:#4a5208;}
+.tb:focus{outline:3px solid #4a5208;outline-offset:2px;}
+.tipb{display:none;margin-top:6px;padding:8px 10px;border-radius:7px;background:#f0efdf;border:1px solid #b8b8a4;font-size:11px;color:#1a1a1a;line-height:1.5;}
+.tipb.show{display:block;}
+
+/* ── Cards ── */
+.card{display:flex;align-items:flex-start;justify-content:space-between;gap:4px;padding:7px 8px;margin-bottom:4px;background:#f9f8f2;border:1px solid #b8b8a4;border-radius:7px;}
+.card span{font-size:11px;color:#1a1a1a;line-height:1.4;flex:1;}
+.del{background:none;border:1.5px solid transparent;border-radius:4px;color:#4a4a3a;font-size:15px;cursor:pointer;flex-shrink:0;padding:0 3px;line-height:1;font-family:inherit;min-width:22px;min-height:22px;display:flex;align-items:center;justify-content:center;}
+.del:hover{color:#a01010;border-color:#a01010;}
+.del:focus{outline:3px solid #a01010;outline-offset:2px;}
+
+/* ── Add item ── */
+.w-add{background:#fff;border-top:1px solid #b8b8a4;padding:.75rem 1.5rem;}
+.w-add fieldset{border:none;padding:0;margin:0;}
+.w-add legend{font-size:11px;font-weight:800;letter-spacing:0.07em;color:#1a1a1a;text-transform:uppercase;margin-bottom:8px;display:block;}
+.add-fields{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;}
+.add-field{display:flex;flex-direction:column;gap:4px;flex:1;min-width:150px;}
+.add-field label{font-size:11px;font-weight:700;color:#1a1a1a;}
+.add-field input,.add-field select{padding:7px 11px;border-radius:8px;border:1.5px solid #9a9a80;background:#ececd9;color:#1a1a1a;font-size:13px;font-family:inherit;}
+.add-field input:focus,.add-field select:focus{outline:3px solid #4a5208;outline-offset:2px;border-color:#4a5208;}
+.add-field input::placeholder{color:#5a5a4a;}
+.abtn{padding:8px 18px;border-radius:8px;background:#4a5208;color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;align-self:flex-end;min-height:40px;min-width:90px;}
+.abtn:hover{background:#363d06;}
+.abtn:focus{outline:3px solid #c05e00;outline-offset:2px;}
+
+/* ── Export ── */
+.w-export{display:flex;gap:8px;flex-wrap:wrap;padding:.75rem 1.5rem;background:#fff;border-top:1px solid #b8b8a4;align-items:center;}
+.ebtn{padding:8px 18px;border-radius:8px;background:#4a5208;color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;min-height:40px;}
+.ebtn:hover{background:#363d06;}
+.ebtn:focus{outline:3px solid #c05e00;outline-offset:2px;}
+.pbtn{padding:8px 18px;border-radius:8px;background:#c05e00;color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;min-height:40px;}
+.pbtn:hover{background:#9a4a00;}
+.pbtn:focus{outline:3px solid #4a5208;outline-offset:2px;}
+.cbtn{padding:8px 18px;border-radius:8px;background:none;border:1.5px solid #9a9a80;color:#1a1a1a;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;min-height:40px;}
+.cbtn:hover{border-color:#a01010;color:#a01010;}
+.cbtn:focus{outline:3px solid #a01010;outline-offset:2px;}
+.sobtn{padding:8px 18px;border-radius:8px;background:none;border:1.5px solid #9a9a80;color:#1a1a1a;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;min-height:40px;margin-left:auto;}
+.sobtn:hover{border-color:#4a5208;color:#4a5208;}
+.sobtn:focus{outline:3px solid #4a5208;outline-offset:2px;}
+
+/* ── Footer ── */
+.w-footer{text-align:center;font-size:12px;color:#3a3a2a;padding:12px 1.5rem;background:#ececd9;line-height:1.6;}
+.w-footer a{color:#4a5208;text-decoration:underline;font-weight:700;}
+.w-footer a:focus{outline:3px solid #4a5208;outline-offset:2px;}
+.w-footer .claude-note{font-size:11px;color:#6a6a5a;margin-top:2px;}
+
+/* ── SR only ── */
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;}
+
+/* ── Download modal ── */
+.mbg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);align-items:center;justify-content:center;padding:2rem;z-index:900;}
+.mbg.show{display:flex;}
+.modal{background:#fff;border-radius:14px;padding:24px 22px;width:100%;max-width:400px;border:1px solid #b8b8a4;}
+.modal-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;gap:12px;}
+.modal h3{font-size:16px;font-weight:700;color:#1a1a1a;}
+.modal p{font-size:13px;color:#3a3a2a;margin-bottom:14px;line-height:1.5;}
+.modal-field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.modal-field label{font-size:12px;font-weight:700;color:#1a1a1a;}
+.modal-field input{padding:8px 11px;border-radius:8px;border:1.5px solid #9a9a80;background:#ececd9;color:#1a1a1a;font-size:13px;font-family:inherit;}
+.modal-field input:focus{outline:3px solid #4a5208;outline-offset:2px;border-color:#4a5208;}
+.modal-field input::placeholder{color:#5a5a4a;}
+.mbtns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;}
+.mcan{padding:8px 16px;border-radius:8px;border:1.5px solid #9a9a80;background:none;color:#1a1a1a;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
+.mcan:hover{border-color:#4a5208;}
+.mcan:focus{outline:3px solid #4a5208;outline-offset:2px;}
+.mgo{padding:8px 16px;border-radius:8px;background:#4a5208;color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;}
+.mgo:hover{background:#363d06;}
+.mgo:focus{outline:3px solid #c05e00;outline-offset:2px;}
+.mclose{background:none;border:1.5px solid transparent;border-radius:6px;font-size:22px;color:#3a3a2a;cursor:pointer;padding:0 4px;line-height:1;font-family:inherit;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;}
+.mclose:hover{color:#1a1a1a;}
+.mclose:focus{outline:3px solid #4a5208;outline-offset:2px;}
+
+/* ── AI modal ── */
+.ai-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);align-items:flex-start;justify-content:center;padding:2rem;z-index:1000;overflow-y:auto;}
+.ai-bg.show{display:flex;}
+.ai-modal{background:#fff;border-radius:14px;padding:24px 22px;width:100%;max-width:620px;border:1px solid #b8b8a4;margin:auto;}
+.ai-modal-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:6px;gap:12px;}
+.ai-modal-head h2{font-size:17px;font-weight:700;color:#1a1a1a;}
+.ai-modal-head .ai-desc-text{font-size:13px;color:#3a3a2a;margin-top:4px;line-height:1.5;}
+.ai-promise{background:#f0efdf;border:1px solid #b8b8a4;border-radius:8px;padding:10px 13px;margin-bottom:14px;font-size:12px;color:#1a1a1a;line-height:1.6;}
+.ai-promise strong{font-weight:700;color:#1a1a1a;}
+.ai-close{background:none;border:1.5px solid transparent;border-radius:6px;font-size:22px;color:#3a3a2a;cursor:pointer;padding:0 4px;line-height:1;flex-shrink:0;font-family:inherit;min-width:32px;min-height:32px;display:flex;align-items:center;justify-content:center;}
+.ai-close:hover{color:#1a1a1a;}
+.ai-close:focus{outline:3px solid #4a5208;outline-offset:2px;}
+.ai-field{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.ai-field label{font-size:12px;font-weight:700;color:#1a1a1a;}
+.ai-field textarea{width:100%;padding:10px 12px;border-radius:8px;border:1.5px solid #9a9a80;background:#ececd9;color:#1a1a1a;font-size:13px;font-family:inherit;resize:vertical;min-height:90px;line-height:1.5;}
+.ai-field textarea:focus{outline:3px solid #4a5208;outline-offset:2px;border-color:#4a5208;}
+.ai-field textarea::placeholder{color:#5a5a4a;}
+
+/* ── AI prompt starters ── */
+.ai-starters{margin-bottom:12px;}
+.ai-starters-label{font-size:11px;font-weight:700;color:#1a1a1a;margin-bottom:6px;display:block;}
+.ai-starter-list{display:flex;flex-direction:column;gap:4px;}
+.ai-starter{background:#f9f8f2;border:1px solid #b8b8a4;border-radius:7px;padding:7px 11px;font-size:12px;color:#3a3a2a;line-height:1.5;}
+.ai-starter strong{color:#1a1a1a;font-weight:700;}
+
+.ai-modal-row{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px;}
+.ai-gbtn{padding:8px 18px;border-radius:8px;background:#4a5208;color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;min-height:40px;}
+.ai-gbtn:hover{background:#363d06;}
+.ai-gbtn:focus{outline:3px solid #c05e00;outline-offset:2px;}
+.ai-gbtn:disabled{opacity:0.5;cursor:not-allowed;}
+.ai-pill{padding:5px 12px;border-radius:20px;border:1.5px solid #9a9a80;background:#ececd9;color:#1a1a1a;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;}
+.ai-pill:hover{border-color:#4a5208;color:#4a5208;}
+.ai-pill:focus{outline:3px solid #4a5208;outline-offset:2px;}
+.ai-stat{font-size:12px;color:#1a1a1a;min-height:18px;margin-bottom:4px;font-weight:600;}
+.ai-stat.generating{color:#c05e00;}
+.ai-res{display:none;margin-top:10px;}
+.ai-res.open{display:block;}
+.ai-rs{margin-bottom:14px;}
+.ai-rl{font-size:10px;font-weight:800;color:#1a1a1a;letter-spacing:0.08em;text-transform:uppercase;margin-bottom:6px;}
+.ai-sg{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;padding:8px 10px;border-radius:8px;background:#f9f8f2;border:1px solid #b8b8a4;margin-bottom:4px;}
+.ai-sg span{font-size:13px;color:#1a1a1a;line-height:1.4;flex:1;}
+.sadd{padding:6px 12px;border-radius:6px;background:#4a5208;color:#fff;border:none;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;font-family:inherit;min-height:34px;}
+.sadd:hover{background:#363d06;}
+.sadd:focus{outline:3px solid #c05e00;outline-offset:2px;}
+.sadd:disabled{opacity:0.6;cursor:not-allowed;background:#9a9a80;}
+.ai-done{width:100%;padding:10px;border-radius:8px;background:#ececd9;border:1.5px solid #9a9a80;color:#1a1a1a;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:16px;}
+.ai-done:hover{background:#deded0;border-color:#4a5208;}
+.ai-done:focus{outline:3px solid #4a5208;outline-offset:2px;}
+
+/* ── Responsive ── */
+@media(max-width:900px){.builder{grid-template-columns:repeat(3,minmax(0,1fr));}}
+@media(max-width:580px){
+  .builder{grid-template-columns:repeat(2,minmax(0,1fr));}
+  .add-fields{flex-direction:column;}
+  .add-field,.abtn{width:100%;}
+  .w-export{flex-direction:column;align-items:stretch;}
+  .ebtn,.pbtn,.cbtn,.sobtn{width:100%;text-align:center;margin-left:0;}
+  .ai-trigger{margin-left:0;margin-top:8px;}
+  .tmpl-row{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<a href="#main-content" class="skip-link">Skip to main content</a>
+<div aria-live="polite" aria-atomic="true" class="sr-only" id="sr-status"></div>
+
+<header role="banner">
+  <div class="w-header">
+    <div class="brand">Vision Shift Catalyst</div>
+    <h1>Logic Model Builder</h1>
+    <p>Build your logic model manually using the templates and fields below — or let AI draft a starter model based on your program description.</p>
+  </div>
+</header>
+
+<main id="main-content">
+
+  <!-- How to use — collapsible -->
+  <div class="how-wrap">
+    <button class="how-toggle" onclick="togHow()" aria-expanded="false" aria-controls="how-body">
+      <span class="how-label">How to use this tool</span>
+      <span class="how-chev" id="how-chev" aria-hidden="true">&#8964;</span>
+    </button>
+    <div class="how-body" id="how-body">
+      <div class="how-grid">
+        <div class="how-item">
+          <strong>1. Start with a template</strong>
+          <span>Choose a quick-start template that best matches your program type, or begin with a blank model.</span>
+        </div>
+        <div class="how-item">
+          <strong>2. Add your items</strong>
+          <span>Type an item in the field below the model, select a section, and click Add — or press Enter.</span>
+        </div>
+        <div class="how-item">
+          <strong>3. Use AI to draft faster</strong>
+          <span>Click "Need help? Build with AI" to generate a starter model based on your program description.</span>
+        </div>
+        <div class="how-item">
+          <strong>4. Download your model</strong>
+          <span>When finished, download a branded PDF or print directly from your browser.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Program info -->
+  <div class="w-meta">
+    <fieldset>
+      <legend>Program information</legend>
+      <div class="meta-fields">
+        <div class="meta-field">
+          <label for="programName">Program name</label>
+          <input type="text" id="programName" placeholder="e.g. Student Success Initiative" autocomplete="organization"/>
+        </div>
+        <div class="meta-field">
+          <label for="userName">Your name</label>
+          <input type="text" id="userName" placeholder="e.g. Dr. Jane Smith" autocomplete="name"/>
+        </div>
+        <div class="meta-field">
+          <label for="dateField">Date</label>
+          <input type="date" id="dateField"/>
+        </div>
+      </div>
+    </fieldset>
+  </div>
+
+  <!-- Templates -->
+  <div class="w-section">
+    <div class="sl" id="templates-label">Quick-start templates</div>
+    <div class="tmpl-row" role="group" aria-labelledby="templates-label">
+      <button class="tp" onclick="loadT('studentSuccess')" aria-label="Load student success initiative template">Student success initiative</button>
+      <button class="tp" onclick="loadT('collegeAccess')" aria-label="Load college access program template">College access program</button>
+      <button class="tp" onclick="loadT('titleIII')" aria-label="Load Title III program template">Title III program</button>
+      <button class="tp" onclick="loadT('workforce')" aria-label="Load workforce readiness program template">Workforce readiness program</button>
+      <button class="tp" onclick="loadT('nonprofit')" aria-label="Load nonprofit community program template">Nonprofit community program</button>
+      <button class="ai-trigger" onclick="openAI()" aria-haspopup="dialog" aria-label="Open AI assistant to help draft your logic model">
+        <span class="ai-dot" aria-hidden="true"></span>
+        Need help? Build with AI
+      </button>
+    </div>
+  </div>
+
+  <!-- Logic model builder -->
+  <div class="bwrap">
+    <div class="sl" id="builder-label">Your logic model</div>
+    <div class="builder" id="builder" role="region" aria-labelledby="builder-label">
+
+      <section class="col" id="col-inputs" aria-label="Inputs column">
+        <div class="col-top">
+          <h2 class="ct">Inputs</h2>
+          <button class="tb" onclick="togTip('inputs')" aria-expanded="false" aria-controls="tip-inputs" aria-label="What are inputs? Click for definition">?</button>
+        </div>
+        <div class="ca" style="background:#4a5208;" role="presentation"></div>
+        <div class="tipb" id="tip-inputs" role="tooltip">Resources invested — staff, funding, materials, facilities, and partnerships.</div>
+      </section>
+
+      <section class="col" id="col-activities" aria-label="Activities column">
+        <div class="col-top">
+          <h2 class="ct">Activities</h2>
+          <button class="tb" onclick="togTip('activities')" aria-expanded="false" aria-controls="tip-activities" aria-label="What are activities? Click for definition">?</button>
+        </div>
+        <div class="ca" style="background:#c05e00;" role="presentation"></div>
+        <div class="tipb" id="tip-activities" role="tooltip">What your program does — workshops, coaching, advising, mentoring.</div>
+      </section>
+
+      <section class="col" id="col-outputs" aria-label="Outputs column">
+        <div class="col-top">
+          <h2 class="ct">Outputs</h2>
+          <button class="tb" onclick="togTip('outputs')" aria-expanded="false" aria-controls="tip-outputs" aria-label="What are outputs? Click for definition">?</button>
+        </div>
+        <div class="ca" style="background:#7a6000;" role="presentation"></div>
+        <div class="tipb" id="tip-outputs" role="tooltip">Direct, measurable products — people served, sessions delivered, materials distributed.</div>
+      </section>
+
+      <section class="col" id="col-shortTerm" aria-label="Short-term outcomes column">
+        <div class="col-top">
+          <h2 class="ct">Short-term outcomes</h2>
+          <button class="tb" onclick="togTip('shortTerm')" aria-expanded="false" aria-controls="tip-shortTerm" aria-label="What are short-term outcomes? Click for definition">?</button>
+        </div>
+        <div class="ca" style="background:#2a5c2a;" role="presentation"></div>
+        <div class="tipb" id="tip-shortTerm" role="tooltip">Changes in knowledge, skills, or attitudes within 1–6 months.</div>
+      </section>
+
+      <section class="col" id="col-mediumTerm" aria-label="Medium-term outcomes column">
+        <div class="col-top">
+          <h2 class="ct">Medium-term outcomes</h2>
+          <button class="tb" onclick="togTip('mediumTerm')" aria-expanded="false" aria-controls="tip-mediumTerm" aria-label="What are medium-term outcomes? Click for definition">?</button>
+        </div>
+        <div class="ca" style="background:#c05e00;opacity:0.65;" role="presentation"></div>
+        <div class="tipb" id="tip-mediumTerm" role="tooltip">Changes in behavior or practice — typically 6 months to 2 years out.</div>
+      </section>
+
+      <section class="col" id="col-longTerm" aria-label="Long-term outcomes column">
+        <div class="col-top">
+          <h2 class="ct">Long-term outcomes</h2>
+          <button class="tb" onclick="togTip('longTerm')" aria-expanded="false" aria-controls="tip-longTerm" aria-label="What are long-term outcomes? Click for definition">?</button>
+        </div>
+        <div class="ca" style="background:#4a5208;" role="presentation"></div>
+        <div class="tipb" id="tip-longTerm" role="tooltip">Ultimate impact — systemic or community-level change over 2+ years.</div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- Add item -->
+  <div class="w-add">
+    <fieldset>
+      <legend>Add an item</legend>
+      <div class="add-fields">
+        <div class="add-field">
+          <label for="itemInput">Item text</label>
+          <input type="text" id="itemInput" placeholder="e.g. Grant funding, Tutoring sessions..."/>
+        </div>
+        <div class="add-field" style="max-width:230px;">
+          <label for="category">Section</label>
+          <select id="category">
+            <option value="inputs">Inputs</option>
+            <option value="activities">Activities</option>
+            <option value="outputs">Outputs</option>
+            <option value="shortTerm">Short-term outcomes</option>
+            <option value="mediumTerm">Medium-term outcomes</option>
+            <option value="longTerm">Long-term outcomes</option>
+          </select>
+        </div>
+        <button class="abtn" onclick="addItem()">Add item</button>
+      </div>
+    </fieldset>
+  </div>
+
+  <!-- Export -->
+  <div class="w-export" role="group" aria-label="Export and reset options">
+    <button class="ebtn" onclick="openM('pdf')" aria-label="Download logic model as PDF">Download PDF</button>
+    <button class="pbtn" onclick="printModel()" aria-label="Print or save logic model as PDF via browser">Print / Save as PDF</button>
+    <button class="cbtn" onclick="clearAll()" aria-label="Clear all items from logic model">Clear all items</button>
+    <button class="sobtn" onclick="startOver()" aria-label="Start over — clears all items and program information">Start over</button>
+  </div>
+
+</main>
+
+<footer role="contentinfo">
+  <div class="w-footer">
+    Powered by <a href="https://visionshiftcatalyst.com" target="_blank" rel="noopener noreferrer" aria-label="Visit Vision Shift Catalyst website, opens in new tab">Vision Shift Catalyst</a>
+    <div class="claude-note">AI suggestions powered by <a href="https://www.anthropic.com/claude" target="_blank" rel="noopener noreferrer" aria-label="Learn about Claude by Anthropic, opens in new tab">Claude</a> — review all suggestions before downloading.</div>
+  </div>
+</footer>
+
+<!-- Download modal -->
+<div class="mbg" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 id="modal-title">Download your logic model</h3>
+      <button class="mclose" onclick="closeM()" aria-label="Close download dialog">&#215;</button>
+    </div>
+    <p id="modal-desc">Enter your email below. We'll also send you helpful resources on program evaluation and impact measurement.</p>
+    <div class="modal-field">
+      <label for="m-email">Email address <span aria-hidden="true">*</span><span class="sr-only">(required)</span></label>
+      <input type="email" id="m-email" placeholder="you@organization.org" required autocomplete="email" aria-required="true"/>
+    </div>
+    <div class="modal-field">
+      <label for="m-org">Organization <span style="font-weight:400;color:#5a5a4a;">(optional)</span></label>
+      <input type="text" id="m-org" placeholder="e.g. City College" autocomplete="organization"/>
+    </div>
+    <div class="mbtns">
+      <button class="mcan" onclick="closeM()">Cancel</button>
+      <button class="mgo" onclick="doDl()">Download</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI modal -->
+<div class="ai-bg" id="ai-modal" role="dialog" aria-modal="true" aria-labelledby="ai-modal-title" aria-describedby="ai-modal-desc">
+  <div class="ai-modal">
+    <div class="ai-modal-head">
+      <div>
+        <h2 id="ai-modal-title">Build with AI</h2>
+        <p class="ai-desc-text" id="ai-modal-desc">Describe your program and Claude will generate a starter logic model you can edit before downloading.</p>
+      </div>
+      <button class="ai-close" onclick="closeAI()" aria-label="Close AI assistant">&#215;</button>
+    </div>
+
+    <div class="ai-promise" role="note">
+      <strong>How it works:</strong> AI will suggest inputs, activities, outputs, and outcomes based on your program description. You review every suggestion and choose what to add — you stay in control of the final model.
+    </div>
+
+    <div class="ai-field">
+      <label for="ai-desc">Program description</label>
+      <textarea id="ai-desc" placeholder="Describe your program here — the more detail you share, the more specific and useful the suggestions will be."></textarea>
+    </div>
+
+    <!-- Prompt starters -->
+    <div class="ai-starters" role="note" aria-label="Helpful prompts to include in your description">
+      <span class="ai-starters-label">Include as much of the following as you can:</span>
+      <div class="ai-starter-list">
+        <div class="ai-starter"><strong>Who do you serve?</strong> e.g., first-generation college students, ages 18–24, at a community college</div>
+        <div class="ai-starter"><strong>What is your program's primary goal?</strong> e.g., improve retention and graduation rates</div>
+        <div class="ai-starter"><strong>What funding stream supports this program?</strong> e.g., Title III, TRIO SSS, Title IV, foundation grant</div>
+        <div class="ai-starter"><strong>What does success look like in year 3?</strong> e.g., 10% increase in graduation rates, 80% of participants persist to second year</div>
+      </div>
+    </div>
+
+    <div class="ai-modal-row" role="group" aria-label="Generate options">
+      <button class="ai-gbtn" id="ai-mbtn" onclick="runAI('all')">Generate full model</button>
+      <button class="ai-pill" onclick="runAI('inputs')" aria-label="Generate inputs only">Inputs</button>
+      <button class="ai-pill" onclick="runAI('activities')" aria-label="Generate activities only">Activities</button>
+      <button class="ai-pill" onclick="runAI('outputs')" aria-label="Generate outputs only">Outputs</button>
+      <button class="ai-pill" onclick="runAI('shortTerm')" aria-label="Generate short-term outcomes only">Short-term</button>
+      <button class="ai-pill" onclick="runAI('mediumTerm')" aria-label="Generate medium-term outcomes only">Medium-term</button>
+      <button class="ai-pill" onclick="runAI('longTerm')" aria-label="Generate long-term outcomes only">Long-term</button>
+    </div>
+    <div class="ai-stat" id="ai-stat" aria-live="polite" aria-atomic="true"></div>
+    <div class="ai-res" id="ai-res" aria-live="polite"></div>
+    <button class="ai-done" onclick="closeAI()">Done — back to my logic model</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+var dlType='';
+var secs=['inputs','activities','outputs','shortTerm','mediumTerm','longTerm'];
+var T={
+  studentSuccess:{
+    name:'Student Success Initiative',
+    inputs:['Academic advisors & success coaches','Student success grant funding','Peer mentors','Early alert software','Campus tutoring center'],
+    activities:['One-on-one academic advising','Early intervention outreach','Peer tutoring sessions','Success workshops & skill-building','Financial aid navigation support'],
+    outputs:['300 students enrolled in program','1,200 advising contacts completed','48 workshops delivered','85% early alert response rate'],
+    shortTerm:['Improved academic self-efficacy','Students connected to campus resources','Financial aid literacy increased','Stronger sense of belonging'],
+    mediumTerm:['Improved semester GPA','Reduced academic probation rates','Increased FAFSA completion','Higher course completion rates'],
+    longTerm:['Increased graduation rates','Reduced achievement gaps','Students transfer or enter workforce prepared','Institutional retention goals met']
+  },
+  collegeAccess:{
+    name:'College Access Program',
+    inputs:['College access counselors','Foundation & federal funding','Community partner organizations','Transportation & outreach materials','College visit budget'],
+    activities:['College application workshops','FAFSA completion events','Campus visit coordination','SAT/ACT preparation sessions','Scholarship search assistance'],
+    outputs:['250 students served','12 college application workshops','8 campus visits completed','95% FAFSA completion rate among participants'],
+    shortTerm:['Students understand college application process','FAFSA awareness and completion','Knowledge of financial aid options','Increased college-going aspirations'],
+    mediumTerm:['College applications submitted','Acceptance letters received','Financial aid packages secured','First-generation students enrolling in college'],
+    longTerm:['Increased college enrollment in target community','Reduced equity gaps in college access','Students persist through first year','Community college-going culture strengthened']
+  },
+  titleIII:{
+    name:'Title III Strengthening Institutions Program',
+    inputs:['Title III federal grant funding','Institutional leadership & staff','Faculty development resources','Technology infrastructure','Advisory committee'],
+    activities:['Faculty professional development','Student support services expansion','Academic program redesign','Technology system upgrades','Data and assessment capacity building'],
+    outputs:['50 faculty trained','500 students receiving enhanced services','3 programs redesigned','New student information system implemented'],
+    shortTerm:['Faculty instructional capacity improved','Students connected to wraparound supports','Data-informed decision-making increased','Institutional policies updated'],
+    mediumTerm:['Improved course success rates','Increased student retention','Stronger institutional infrastructure','Enhanced program quality and compliance'],
+    longTerm:['Long-term institutional sustainability','Increased graduation and transfer rates','Reduced equity gaps in student outcomes','Institution no longer dependent on federal support for core functions']
+  },
+  workforce:{
+    name:'Workforce Readiness Program',
+    inputs:['Career coaches & workforce specialists','Employer partners','Industry-aligned curriculum','Job placement funding','Community referral network'],
+    activities:['Skills training & credentialing','Resume & interview coaching','Employer site visits & job shadows','Career pathway advising','Placement & follow-up support'],
+    outputs:['200 participants enrolled','15 employer partners engaged','20 training sessions delivered','80% credential attainment rate'],
+    shortTerm:['Participants gain job-ready skills','Professional network established','Resume and interview skills improved','Industry knowledge increased'],
+    mediumTerm:['Job placement in target field','Wage increase over baseline','Industry credential obtained','Participants retain employment 6 months'],
+    longTerm:['Long-term economic self-sufficiency','Reduced reliance on public assistance','Career advancement over time','Stronger regional workforce pipeline']
+  },
+  nonprofit:{
+    name:'Nonprofit Community Program',
+    inputs:['Program staff & volunteers','Foundation grant & donations','Community center space','Outreach & program materials','Partner organization network'],
+    activities:['Community needs assessment','Direct service delivery','Leadership development training','Coalition building & advocacy','Resource navigation support'],
+    outputs:['500 community members served','12 community forums held','50 leaders trained','200 individuals connected to resources'],
+    shortTerm:['Increased awareness of available resources','Stronger community connections','Participants develop leadership skills','Community trust and engagement built'],
+    mediumTerm:['Community-led projects launched','Policy and advocacy actions taken','Organizations strengthen internal capacity','Residents access services they need'],
+    longTerm:['Equitable access to services achieved','Sustained community-led change','Strengthened organizational ecosystem','Measurable improvement in community well-being']
+  }
+};
+
+function announce(msg){var el=document.getElementById('sr-status');el.textContent='';setTimeout(function(){el.textContent=msg;},60);}
+
+/* ── How to use toggle ── */
+function togHow(){
+  var body=document.getElementById('how-body');
+  var chev=document.getElementById('how-chev');
+  var btn=document.querySelector('.how-toggle');
+  var isOpen=body.classList.contains('open');
+  body.classList.toggle('open');
+  chev.classList.toggle('open');
+  btn.setAttribute('aria-expanded',isOpen?'false':'true');
+}
+
+/* ── Tip toggles ── */
+function togTip(s){
+  var el=document.getElementById('tip-'+s);
+  var btn=document.querySelector('[aria-controls="tip-'+s+'"]');
+  var was=el.classList.contains('show');
+  secs.forEach(function(t){
+    document.getElementById('tip-'+t).classList.remove('show');
+    var b=document.querySelector('[aria-controls="tip-'+t+'"]');
+    if(b)b.setAttribute('aria-expanded','false');
+  });
+  if(!was){el.classList.add('show');if(btn)btn.setAttribute('aria-expanded','true');}
+}
+
+function escHtml(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function escAttr(t){return t.replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
+function secLabel(s){var m={inputs:'Inputs',activities:'Activities',outputs:'Outputs',shortTerm:'Short-term outcomes',mediumTerm:'Medium-term outcomes',longTerm:'Long-term outcomes'};return m[s]||s;}
+
+/* ── Add card ── */
+function addCard(text,sec){
+  var col=document.getElementById('col-'+sec);
+  var d=document.createElement('div');d.className='card';d.setAttribute('role','listitem');
+  var safe=escHtml(text);var attr=escAttr(text);var lbl=secLabel(sec);
+  d.innerHTML='<span>'+safe+'</span><button class="del" onclick="removeCard(this,\''+attr+'\',\''+lbl+'\')" aria-label="Remove \''+attr+'\' from '+lbl+'">&#215;</button>';
+  col.appendChild(d);
+}
+function removeCard(btn,text,label){btn.parentElement.remove();announce('"'+text+'" removed from '+label+'.');}
+
+/* ── Add item ── */
+function addItem(){
+  var inp=document.getElementById('itemInput');var cat=document.getElementById('category').value;var val=inp.value.trim();
+  if(!val){announce('Please enter an item before adding.');return;}
+  addCard(val,cat);announce('"'+val+'" added to '+secLabel(cat)+'.');inp.value='';inp.focus();
+}
+document.getElementById('itemInput').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();addItem();}});
+
+function nukeCards(){
+  secs.forEach(function(s){
+    var col=document.getElementById('col-'+s);
+    var c=col.querySelector('.card');
+    while(c){c.parentNode.removeChild(c);c=col.querySelector('.card');}
+  });
+}
+
+function clearAll(){
+  showConfirm('Clear all items? Program name and date will be kept.', function(){
+    nukeCards();
+    announce('All items cleared.');
+  });
+}
+
+function startOver(){
+  showConfirm('Start over? This clears all items and resets all fields.', function(){
+    nukeCards();
+    document.getElementById('programName').value='';
+    document.getElementById('userName').value='';
+    document.getElementById('dateField').value='';
+    announce('Logic model reset. All fields cleared.');
+  });
+}
+
+function loadT(type){
+  nukeCards();
+  var t=T[type];
+  document.getElementById('programName').value=t.name;
+  secs.forEach(function(s){(t[s]||[]).forEach(function(item){addCard(item,s);});});
+  announce(t.name+' template loaded.');
+}
+
+/* ── Inline confirm bar (replaces window.confirm which is blocked in iframes) ── */
+function showConfirm(msg, onYes){
+  var existing=document.getElementById('confirm-bar');
+  if(existing)existing.remove();
+  var bar=document.createElement('div');
+  bar.id='confirm-bar';
+  bar.setAttribute('role','alertdialog');
+  bar.setAttribute('aria-label','Confirmation required');
+  bar.style.cssText='position:fixed;bottom:0;left:0;right:0;background:#1a1a1a;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:12px 1.5rem;gap:12px;z-index:9999;flex-wrap:wrap;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Arial,sans-serif;font-size:13px;';
+  var txt=document.createElement('span');txt.textContent=msg;
+  var btns=document.createElement('div');btns.style.cssText='display:flex;gap:8px;flex-shrink:0;';
+  var yes=document.createElement('button');
+  yes.textContent='Yes, continue';
+  yes.style.cssText='padding:6px 14px;border-radius:7px;background:#c05e00;color:#fff;border:none;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;';
+  yes.onclick=function(){bar.remove();onYes();};
+  var no=document.createElement('button');
+  no.textContent='Cancel';
+  no.style.cssText='padding:6px 14px;border-radius:7px;background:transparent;color:#fff;border:1.5px solid rgba(255,255,255,0.4);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;';
+  no.onclick=function(){bar.remove();};
+  btns.appendChild(yes);btns.appendChild(no);
+  bar.appendChild(txt);bar.appendChild(btns);
+  document.body.appendChild(bar);
+  yes.focus();
+}
+
+/* ── Focus trap ── */
+function trapFocus(modal){
+  var focusable=modal.querySelectorAll('button,input,select,textarea,a[href],[tabindex]:not([tabindex="-1"])');
+  var first=focusable[0];var last=focusable[focusable.length-1];
+  modal._trap=function(e){
+    if(e.key!=='Tab')return;
+    if(e.shiftKey){if(document.activeElement===first){e.preventDefault();last.focus();}}
+    else{if(document.activeElement===last){e.preventDefault();first.focus();}}
+  };
+  modal.addEventListener('keydown',modal._trap);
+  if(first)setTimeout(function(){first.focus();},50);
+}
+function releaseFocus(modal){if(modal._trap)modal.removeEventListener('keydown',modal._trap);}
+
+/* ── Download modal ── */
+var _prevDl=null;
+function openM(type){dlType=type;_prevDl=document.activeElement;var m=document.getElementById('modal');m.classList.add('show');trapFocus(m);}
+function closeM(){var m=document.getElementById('modal');m.classList.remove('show');releaseFocus(m);if(_prevDl)_prevDl.focus();}
+document.getElementById('modal').addEventListener('keydown',function(e){if(e.key==='Escape')closeM();});
+
+function doDl(){
+  var e=document.getElementById('m-email').value;
+  if(!e||e.indexOf('@')<0){announce('Please enter a valid email address.');document.getElementById('m-email').focus();return;}
+  console.log('Lead captured:',{email:e,org:document.getElementById('m-org').value,type:dlType});
+  closeM();dlPDF();
+}
+
+/* ── AI modal ── */
+var _prevAI=null;
+function openAI(){_prevAI=document.activeElement;var m=document.getElementById('ai-modal');m.classList.add('show');trapFocus(m);}
+function closeAI(){var m=document.getElementById('ai-modal');m.classList.remove('show');releaseFocus(m);if(_prevAI)_prevAI.focus();}
+document.getElementById('ai-modal').addEventListener('keydown',function(e){if(e.key==='Escape')closeAI();});
+
+/* ── Print ── */
+function printModel(){window.print();}
+
+/* ── Get items ── */
+function getItems(s){return Array.from(document.querySelectorAll('#col-'+s+' .card span')).map(function(el){return el.textContent;});}
+
+/* ── PDF with boxed items ── */
+function dlPDF(){
+  var jsPDF=window.jspdf.jsPDF;
+  var pdf=new jsPDF('l','mm','a4');
+  var name=document.getElementById('programName').value||'Logic Model';
+  var user=document.getElementById('userName').value;
+  var date=document.getElementById('dateField').value||new Date().toLocaleDateString();
+
+  /* Header bar */
+  pdf.setFillColor(74,82,8);pdf.rect(0,0,297,22,'F');
+  pdf.setFillColor(192,94,0);pdf.rect(0,22,297,3,'F');
+  pdf.setTextColor(255,255,255);pdf.setFontSize(13);pdf.setFont(undefined,'bold');
+  pdf.text('Vision Shift Catalyst',14,14);
+  pdf.setFontSize(9);pdf.setFont(undefined,'normal');
+  pdf.text('visionshiftcatalyst.com',14,20);
+
+  /* Program info */
+  pdf.setTextColor(0,0,0);pdf.setFontSize(15);pdf.setFont(undefined,'bold');
+  pdf.text(name,14,35);
+  pdf.setFontSize(9);pdf.setFont(undefined,'normal');pdf.setTextColor(60,60,40);
+  var hy=42;
+  if(user){pdf.text('Prepared by: '+user,14,hy);hy+=5;}
+  pdf.text('Date: '+date,14,hy);
+
+  /* Column setup */
+  var titles=['INPUTS','ACTIVITIES','OUTPUTS','SHORT-TERM OUTCOMES','MEDIUM-TERM OUTCOMES','LONG-TERM OUTCOMES'];
+  var colColors=[
+    [74,82,8],   /* vision green */
+    [192,94,0],  /* orange */
+    [122,96,0],  /* amber */
+    [42,92,42],  /* green */
+    [192,94,0],  /* orange muted */
+    [74,82,8]    /* vision green */
+  ];
+  var sx=10,cw=45,startY=hy+10;
+  var pageH=200;
+
+  secs.forEach(function(s,i){
+    var x=sx+i*cw;
+    var col=colColors[i];
+
+    /* Column header box */
+    pdf.setFillColor(col[0],col[1],col[2]);
+    pdf.roundedRect(x,startY,cw-2,9,1,1,'F');
+    pdf.setTextColor(255,255,255);
+    pdf.setFontSize(7);pdf.setFont(undefined,'bold');
+    var titleLines=pdf.splitTextToSize(titles[i],cw-6);
+    var ty=startY+5;
+    if(titleLines.length>1)ty=startY+3.5;
+    titleLines.forEach(function(l){pdf.text(l,x+(cw-2)/2,ty,{align:'center'});ty+=3.5;});
+
+    /* Item cards */
+    var itemY=startY+11;
+    pdf.setFont(undefined,'normal');
+    getItems(s).forEach(function(item){
+      var lines=pdf.splitTextToSize(item,cw-8);
+      var boxH=lines.length*4+5;
+
+      /* Card box */
+      pdf.setFillColor(249,248,242);
+      pdf.setDrawColor(col[0],col[1],col[2]);
+      pdf.setLineWidth(0.4);
+      pdf.roundedRect(x,itemY,cw-2,boxH,1.5,1.5,'FD');
+
+      /* Card text */
+      pdf.setTextColor(26,26,26);
+      pdf.setFontSize(8);
+      var ly=itemY+4;
+      lines.forEach(function(l){pdf.text(l,x+3,ly);ly+=4;});
+      itemY+=boxH+2;
+    });
+  });
+
+  /* Footer */
+  pdf.setFontSize(7);pdf.setTextColor(130,130,100);
+  pdf.text('Powered by Vision Shift Catalyst | AI suggestions by Claude | visionshiftcatalyst.com',14,206);
+
+  pdf.save(name.replace(/[^a-z0-9]/gi,'_')+'_logic_model.pdf');
+  announce('PDF downloaded successfully.');
+}
+
+/* ── AI generation ── */
+async function runAI(section){
+  var desc=document.getElementById('ai-desc').value.trim();
+  if(!desc){document.getElementById('ai-stat').textContent='Please describe your program before generating suggestions.';document.getElementById('ai-desc').focus();return;}
+  var btn=document.getElementById('ai-mbtn');btn.disabled=true;
+  var statEl=document.getElementById('ai-stat');var resEl=document.getElementById('ai-res');
+  statEl.textContent='Generating suggestions — this may take a few seconds…';
+  statEl.classList.add('generating');
+  resEl.classList.remove('open');resEl.innerHTML='';
+  var labels={inputs:'Inputs',activities:'Activities',outputs:'Outputs',shortTerm:'Short-term outcomes',mediumTerm:'Medium-term outcomes',longTerm:'Long-term outcomes'};
+  var sections=section==='all'?Object.keys(labels):[section];
+  var prompt='You are an expert program evaluator specializing in higher education, nonprofit, and public sector programs.\n\nGenerate 4-5 logic model items for each of these sections: '+sections.map(function(s){return labels[s];}).join(', ')+'.\n\nProgram description: '+desc+'\n\nCRITICAL RULES — follow exactly:\n1. Each item must be ONE single, standalone, specific, measurable statement.\n2. Never combine multiple ideas into one item using "and", commas, or slashes.\n3. Wrong: "Improved GPA and reduced probation rates" — Right: "Improved semester GPA"\n4. Wrong: "Resume, interview, and networking skills improved" — Right: "Resume writing skills improved"\n5. Each item must be independently actionable or measurable on its own.\n6. Use plain, direct language. No jargon.\n\nRespond ONLY with valid JSON, no preamble or markdown:\n{"inputs":[],"activities":[],"outputs":[],"shortTerm":[],"mediumTerm":[],"longTerm":[]}\nOnly include keys for the sections requested.';
+  try{
+    var resp=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:prompt}]})});
+    var data=await resp.json();
+    var raw=data.content.map(function(b){return b.text||'';}).join('');
+    /* Strip markdown fences and trim */
+    raw=raw.replace(/```json/g,'').replace(/```/g,'').trim();
+    /* Extract just the JSON object in case there is preamble */
+    var jsonMatch=raw.match(/\{[\s\S]*\}/);
+    if(!jsonMatch){throw new Error('No JSON object found in response');}
+    raw=jsonMatch[0];
+    /* Replace smart quotes and special apostrophes with standard ones */
+    raw=raw.replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').replace(/\u2013|\u2014/g,'-');
+    var parsed=JSON.parse(raw);
+    var count=0;
+    sections.forEach(function(s){
+      if(!parsed[s]||!parsed[s].length)return;
+      var block=document.createElement('div');block.className='ai-rs';
+      var items=parsed[s].map(function(item){
+        count++;
+        var safe=escHtml(item);var attr=escAttr(item);
+        return '<div class="ai-sg"><span>'+safe+'</span><button class="sadd" aria-label="Add \''+attr+'\' to '+labels[s]+'" onclick="addCard(\''+attr+"','"+s+"');this.textContent='Added';this.disabled=true;announce('"+attr+' added to '+labels[s]+"');\">+ Add</button></div>";
+      }).join('');
+      block.innerHTML='<div class="ai-rl">'+labels[s]+'</div>'+items;
+      resEl.appendChild(block);
+    });
+    resEl.classList.add('open');
+    statEl.classList.remove('generating');
+    statEl.textContent=count+' suggestions ready — review each one and click + Add to include it in your model.';
+  }catch(err){
+    statEl.classList.remove('generating');
+    statEl.textContent='Something went wrong generating suggestions. Please try again.';console.error(err);
+  }
+  btn.disabled=false;
+}
+</script>
+</body>
+</html>
